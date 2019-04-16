@@ -1,0 +1,4 @@
+## .gitignore file for zopfli-scaffold
+
+## ignore folder fetched through gclient
+zopfli
