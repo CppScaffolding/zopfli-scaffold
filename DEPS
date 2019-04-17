@@ -4,7 +4,7 @@
 # -----------------------------------------------------------------------------
 
 # This file is used to manage the dependencies of the
-# zopfli-scaffold scaffold repo.
+# zopfli scaffold repo.
 # It is used by gclient to determine what version of each dependency to check
 # out, and where.
 #
