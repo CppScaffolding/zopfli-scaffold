@@ -1,16 +1,18 @@
--- scaffold geniefile for zopfli
+-- package geniefile for zopfli
 
 zopfli_script = path.getabsolute(path.getdirectory(_SCRIPT))
 zopfli_root = path.join(zopfli_script, "zopfli")
 
 zopfli_includedirs = {
-	path.join(zopfli_script, "config"),
 	zopfli_root,
+	path.join(zopfli_root, "src"),
+}
+
+zopfli_defines = {
 }
 
 zopfli_libdirs = {}
 zopfli_links = {}
-zopfli_defines = {}
 
 ----
 return {
@@ -36,24 +38,152 @@ return {
 
 	_create_projects = function()
 
-project "zopfli"
-	kind "StaticLib"
-	language "C++"
-	flags {}
+	--- original zopfli geniefile file creates several projects, we're wrapping it all in one
 
-	includedirs {
-		zopfli_includedirs,
-	}
+	project "zopfli"
+		kind "StaticLib"
+		language "C"
 
-	defines {}
+		includedirs {
+			zopfli_includedirs,
+		}
 
-	files {
-		path.join(zopfli_script, "config", "**.h"),
-		path.join(zopfli_root, "**.h"),
-		path.join(zopfli_root, "**.cpp"),
-	}
+		defines {
+			--"zopfli_USE_CXX03_STDLIB",
+		}
 
-end, -- _create_projects()
+		files {
+			path.join(zopfli_root, "src/zopfli/**.h"),
+			path.join(zopfli_root, "src/zopfli/**.c"),
+		}
+
+		excludes {
+			path.join(zopfli_root, "src/zopfli/zopfli_bin.c"),
+		}
+
+		buildoptions {
+		}
+
+		linkoptions {
+		}
+
+	---
+
+	project "zopfli_png"
+		kind "StaticLib"
+		language "C++"
+
+		includedirs {
+			zopfli_includedirs,
+		}
+
+		defines {
+			--"zopfli_USE_CXX03_STDLIB",
+		}
+
+		files {
+			path.join(zopfli_root, "src/zopflipng/*_lib.h"),
+			path.join(zopfli_root, "src/zopflipng/*_lib.cc"),
+		}
+
+		buildoptions {
+			cpp14_buildoptions,
+		}
+
+		linkoptions {
+			cpp14_linkoptions,
+		}
+
+	---
+
+	project "zopfli_lodepng"
+		kind "StaticLib"
+		language "C++"
+
+		includedirs {
+			zopfli_includedirs,
+		}
+
+		defines {
+			--"zopfli_USE_CXX03_STDLIB",
+		}
+
+		files {
+			path.join(zopfli_root, "src/zopflipng/lodepng/*.h"),
+			path.join(zopfli_root, "src/zopflipng/lodepng/*.cpp"),
+			path.join(zopfli_root, "src/zopflipng/lodepng/*.cc"),
+		}
+
+		buildoptions {
+			cpp14_buildoptions,
+		}
+
+		linkoptions {
+			cpp14_linkoptions,
+		}
+
+	---
+
+	project "zopflic"
+		kind "ConsoleApp"
+		language "C"
+
+		includedirs {
+			zopfli_includedirs,
+		}
+
+		defines {
+			--"zopfli_USE_CXX03_STDLIB",
+		}
+
+		files {
+			path.join(zopfli_root, "src/zopfli/zopfli_bin.c"),
+		}
+
+		links {
+			"zopfli",
+		}
+
+		buildoptions {
+		}
+
+		linkoptions {
+		}
+
+	---
+
+	project "zopfli_pngenc"
+		kind "ConsoleApp"
+		language "C++"
+
+		includedirs {
+			zopfli_includedirs,
+		}
+
+		defines {
+			--"zopfli_USE_CXX03_STDLIB",
+		}
+
+		files {
+			path.join(zopfli_root, "src/zopflipng/*_bin.cc"),
+		}
+
+		links {
+			"zopfli",
+			"zopfli_png",
+			"zopfli_lodepng",
+		}
+
+		buildoptions {
+			cpp14_buildoptions,
+		}
+
+		linkoptions {
+			cpp14_linkoptions,
+		}
+
+	---
+	end, -- _create_projects()
 }
 
 ---
